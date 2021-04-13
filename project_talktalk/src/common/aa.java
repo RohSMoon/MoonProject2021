@@ -7,6 +7,7 @@ public class aa {
 	public static void main(String[] args) {
 		System.out.println("안녕하세요");
 		new aa().a();
+		System.out.println("내가 만들었더가싀");
 	}
 
 }
