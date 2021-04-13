@@ -6,6 +6,9 @@ public class aa {
 	}
 	public static void main(String[] args) {
 <<<<<<< HEAD
+		System.out.println("10시 퇴근");
+=======
+<<<<<<< HEAD
 		// TODO Auto-generated method stub
 			System.out.println(" 무야호 ");
 			System.out.println("호우호우");
@@ -17,6 +20,7 @@ public class aa {
 =======
 >>>>>>> refs/heads/main
 >>>>>>> branch 'main' of https://github.com/goodlucky1215/project_talktalk.git
+>>>>>>> refs/heads/main
 	}
 
 }
