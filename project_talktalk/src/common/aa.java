@@ -6,6 +6,7 @@ public class aa {
 	}
 	public static void main(String[] args) {
 		System.out.println("10시 퇴근");
+		System.out.println("내가 썻다!!!!!!!!!!!!!!!!");
 		// TODO Auto-generated method stub
 			System.out.println(" 무야호 ");
 			System.out.println("호우호우");
