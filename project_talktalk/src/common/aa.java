@@ -7,6 +7,7 @@ public class aa {
 	public static void main(String[] args) {
 <<<<<<< HEAD
 		System.out.println("10시 퇴근");
+		System.out.println("내가 썻다!!!!!!!!!!!!!!!!");
 =======
 <<<<<<< HEAD
 		// TODO Auto-generated method stub
