@@ -16,49 +16,50 @@ import javax.swing.JPanel;
 import View.Login_view;
 
 public class TalkClient extends JFrame implements ActionListener{
+	Login_view login_view = null;
 	//////1-1-4. 나의 소켓을 넣을 통 생성	
 	Socket mySocket = null;
 	//////1-1-5. 나의 말을 전달한 inputstream	
 	ObjectInputStream ois  = null;
 	//////1-1-6. 다른 사람의 말을 받을 outputstream	
-	ObjectOutputStream oos = null;		
-	////// 들어온 클라이언트의 이름을 받아올 변수명 선언	
-	//String nickName = "럭키님";
-	//////1-1-8. 들어온 클라이언트의 이름을 받아올 변수명 선언	
+	public ObjectOutputStream oos = null;		
+	//////1-1-7. Server의 ip와 port를 가져옴.
+	String ip = "localhost";
+	int port = 3002;
 	TalkClientThread tct = null;
-	public TalkClient(Login_view login) {
-		this.mySocket = login.getMySocket();
-		this.ois = login.getOis();
-		this.oos = login.getOos();
-		this.tct = login.getTct();
-		//화면 먼저 켜지고
-		initdisplay();
-		//서버로부터 정보들 다 가져오기
-		start_process();
-	}
-	///////////////////////////////단위 테스트 용.
-	public TalkClient() {
+	public void connect_process() {
 		try {
-			String ip = "localhost";
-			int port = 3002;
+			//////3-2.서버에 접속과 동시에  클라이언트의 소켓 생성
+			//통신은 지연될 수 있다.-wait - try...catch해야함. 연결 ㄱㄱ TalkServer대로 작동 시작 ㄱㄱ
 			mySocket = new Socket(ip,port);
+			//////3-3.내가 입력한 정보를 서버에게 보내는 통로
 			oos = new ObjectOutputStream
 					(mySocket.getOutputStream());			
+			//////3-4. 서버로부터 정보를 받는 통로
 			ois = new ObjectInputStream
-						(mySocket.getInputStream());
+					(mySocket.getInputStream());
+			//////TalkServerThread안의 2-4인 이부분으로  String msg = (String)ois.readObject();부분으로 이 값이 넘어간다.
+			//Protocol.ACCESS만 넣으면 숫자이기 때문에  +""을 붙여서 문자 처리 될 수 있게 해줌. - 연결됐음을 서버에게 알림
 			oos.writeObject(Protocol.ACCESS+"");
+			//////3-10. 나의 스래드가 담긴 주소번지를 담아서 TalkClientThread에 넣어줌 ㄱㄱ
 			tct = new TalkClientThread(this);
 			tct.start();
 		} catch (Exception e) {
 			//////3-12. 엘러를 알려줌
 			System.out.println(e.toString());//에러 힌트문 출력.
-		}
+		}		
+	}	
+	
+	public TalkClient(Login_view login_view) {
+		this.login_view = login_view;
+		//클라이언트와 서버 연결
+		connect_process();
+		//화면 먼저 켜지고
+		//initdisplay();
+		//서버로부터 정보들 다 가져오기
+		//start_process();
 	}
-	public static void main(String[] args) {
-		TalkClient tc2 = new TalkClient();
-		tc2.initdisplay();
-		
-	}/////////////////////////////////////
+	
 	public void start_process() {
 		try {
 			//사원 목록, 방 목록, 내가 안들어간 방목록 3가지 다 가져오기
