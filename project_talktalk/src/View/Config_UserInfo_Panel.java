@@ -45,7 +45,8 @@ public class Config_UserInfo_Panel extends JPanel {
 		userInfo_status_jbl.setBackground(new Color(255, 160, 122));
 		userInfo_status_jbl.setBounds(43, 189, 52, 15);
 		this.add(userInfo_status_jbl);
-
+		
+		
 		userInfo_statusChange_jbl = new JLabel("상태 변경");
 		userInfo_statusChange_jbl.setHorizontalAlignment(SwingConstants.CENTER);
 		userInfo_statusChange_jbl.setBounds(64, 32, 130, 17);

@@ -67,9 +67,9 @@ public class MenuList_View extends JFrame {
 		MenuPanel.setForeground(Color.PINK);
 		MenuPanel.setBounds(0, 0, 65, 463);
 		this.add(MenuPanel);
-		
 		///////////////////////////////////
 		menuList_Ctrl = new MenuList_Ctrl(this);
+		
 		
 		memberList_jbtn_MenuPanel = new JButton(
 				new ImageIcon(imgPath+"memberList.png"));
@@ -169,6 +169,8 @@ public class MenuList_View extends JFrame {
 		memberListPanel.add(memberListTreeScrollPane);
 		
 		memberListTree = new JTree();
+		memberListTree.addMouseListener(new MemberList_Ctrl(this));
+		memberListTree.addTreeSelectionListener(new MemberList_Ctrl(this));
 		memberListTreeScrollPane.setViewportView(memberListTree);
 		memberListTree.setModel(new DefaultTreeModel(
 			new DefaultMutableTreeNode("memberListTree") {
@@ -178,7 +180,7 @@ public class MenuList_View extends JFrame {
 						node_1.add(new DefaultMutableTreeNode("Wolverine"+"(상태메시지)"));
 						node_1.add(new DefaultMutableTreeNode("Venom"+"(상태메시지)"));
 						node_1.add(new DefaultMutableTreeNode("Iron-Man"+"(상태메시지)"));
-					add(node_1);
+						add(node_1);
 					node_1 = new DefaultMutableTreeNode("CityWar");
 						node_1.add(new DefaultMutableTreeNode("CaptainAmerica"));
 						node_1.add(new DefaultMutableTreeNode("DoctorStrange"));

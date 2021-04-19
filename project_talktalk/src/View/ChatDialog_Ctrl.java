@@ -12,7 +12,10 @@ public class ChatDialog_Ctrl implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
-	if (obj==chatDialog_View.send_jbtn) {
+	if (obj==chatDialog_View.send_jbtn||obj==chatDialog_View.InputChat_jtf) {
+
+		//전송 버튼을 누르거나 필드에 감지되면 String input에 넣어줄거야.
+		String inputMsg = chatDialog_View.InputChat_jtf.getText();
 		System.out.println("전송버튼");
 	}
 	
