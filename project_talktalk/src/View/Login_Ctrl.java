@@ -14,10 +14,15 @@ public class Login_Ctrl implements ActionListener{
 		Object obj = e.getSource();
 		if (obj==login_view.logView_Login_Button) {
 			System.out.println("로그인버튼 호출 성공");
+//  ******** 로그인 받는 부분 
+		String abc = login_view.logView_MemberNo_jtf.getText();
+		String abcd = login_view.logView_MemberPw_jtf.getText();
+			
 			
 			login_view.dispose();
 			
 			MenuList_View menuList_View = new MenuList_View();
+			
 			
 		}
 		if (obj==login_view.logView_Join_Button) {
