@@ -91,6 +91,7 @@ public class Login_view extends JFrame {
 	 */
 	public Login_view() {
 		initialize();
+		connect_process();
 	}
 	/////End of Const	/////End of Const	/////End of Const	/////End of Const	/////End of Const
 	/**
