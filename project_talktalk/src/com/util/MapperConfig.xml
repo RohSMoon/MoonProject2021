@@ -16,6 +16,6 @@
 		</environment>
 	</environments>
 	<mappers>
-		<mapper resource ="com/util/SqlProc.xml"/>
+		<mapper resource ="com/util/sqlproc.xml"/>
 	</mappers>
  </configuration>

@@ -13,7 +13,7 @@ public class MyBatisCommonFactory {
 			synchronized (SqlSessionFactory.class) {
 				if (sqlSessionFactory == null) {
 					try {
-						String resource = "test/mybatis/MapperConfig.xml";
+						String resource = "com/util/MapperConfig.xml";
 						Reader reader = Resources.getResourceAsReader(resource);
 						sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 					} catch (Exception e) {
