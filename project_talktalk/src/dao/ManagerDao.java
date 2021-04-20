@@ -46,7 +46,7 @@ public class ManagerDao {
 	}//////////////////////////////////////////// [[[ 6-1. 전체 사원 조회 종료 ]]] ////////////////////////////////////////////
 
 	/* 6-2. 회원가입 승인 목록 가져오기 */
-	public List<Map<String,Object>> approval_List(Map<String,Object> A_List){
+	public List<Map<String,Object>> approval_List(Map<String,Object> a_List){
 		//SqlSessionFactory를 통하여 MyBatis와 연결 (싱글톤)
 		sqlSessionFactory = MyBatisCommonFactory.getInstance();
 		//myChatList라는 변수명 선언해주기
@@ -55,7 +55,7 @@ public class ManagerDao {
 			//MyBatis를 통하여 쿼리문 또는 프로시저를 실행하려고 열었음
 			sqlSession = sqlSessionFactory.openSession();
 			//#53번에서 선언한 변수(approvalList)에 com.util.sqlproc.xml파일의 6-2.회원가입 승인 목록 가져오기 프로시저를 실행.(A_List의 Value로 꺼내옴)
-			approvalList = sqlSession.selectList("mybatis.ProcMapper.approval_List", A_List);
+			approvalList = sqlSession.selectList("mybatis.ProcMapper.approval_List", a_List);
 		//단계별 예외처리
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -67,7 +67,7 @@ public class ManagerDao {
 	}//////////////////////////////////////////// [[[ 6-2. 회원가입 승인 목록 가져오기 종료 ]]] ////////////////////////////////////////////
 	
 	/* 6-3. 회원가입 승인 */
-	public List<Map<String,Object>> get_ApprovalMember(Map<String,Object> Approval_M){
+	public List<Map<String,Object>> get_ApprovalMember(Map<String,Object> approval_M){
 		//SqlSessionFactory를 통하여 MyBatis와 연결 (싱글톤)
 		sqlSessionFactory = MyBatisCommonFactory.getInstance();
 		//M_Approval라는 변수명 선언해주기(Vector안에 넣어주기)
@@ -76,7 +76,7 @@ public class ManagerDao {
 			//MyBatis를 통하여 쿼리문 또는 프로시저를 실행하려고 열었음
 			sqlSession = sqlSessionFactory.openSession();
 			//#74번에서 선언한 변수(M_Approval)에 com.util.sqlproc.xml파일의 6-3. 회원가입 승인 프로시저를 실행.(Approval_M의 Value로 꺼내옴)
-			M_Approval = sqlSession.selectList("mybatis.ProcMapper.approval_Member", Approval_M);
+			M_Approval = sqlSession.selectList("mybatis.ProcMapper.approval_Member", approval_M);
 		//단계별 예외처리
 		} catch (Exception e) {
 			e.printStackTrace();

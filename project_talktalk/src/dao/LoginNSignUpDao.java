@@ -29,7 +29,7 @@ public class LoginNSignUpDao{
 	SqlSession sqlSession = null;
 	
 	/* 1.1 로그인 구간 */
-	public List<Map<String,Object>> getLogin(Map<String,Object> M_login) {
+	public List<Map<String,Object>> getLogin(Map<String,Object> m_login) {
 		//SqlSessionFactory를 통하여 MyBatis와 연결 (싱글톤)
 		sqlSessionFactory = MyBatisCommonFactory.getInstance();
 		//loginMap 변수명 선언해주기
@@ -38,7 +38,7 @@ public class LoginNSignUpDao{
 			//MyBatis를 통하여 쿼리문 또는 프로시저를 실행하려고 열었음
 			sqlSession = sqlSessionFactory.openSession();
 			//#36번에 선언한 변수(loginMap)에 com.util.sqlproc.xml파일의 1-1.로그인 프로시저를 실행하기(Value값은 M_login에서 찾아서 꺼내줄 것)
-			loginMap = sqlSession.selectList("mybatis.ProcMapper.chat_login", M_login);
+			loginMap = sqlSession.selectList("mybatis.ProcMapper.chat_login", m_login);
 		//예외처리
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -50,7 +50,7 @@ public class LoginNSignUpDao{
 	}//////////////////////////////////////////// [[[ 1-1. 로그인 구간 종료 ]]] ////////////////////////////////////////////
 	
 	/* 1-2. 회원 가입 구간 */
-	public List<Map<String,Object>> getSiguUp(Map<String,Object> M_signUp) {
+	public List<Map<String,Object>> getSiguUp(Map<String,Object> m_signUp) {
 		sqlSessionFactory = MyBatisCommonFactory.getInstance();
 		//signUpMap이라는 변수명으로 Map을 선언해준다.
 		List<Map<String, Object>> signUpMap = null;
@@ -58,7 +58,7 @@ public class LoginNSignUpDao{
 			//DB의 쿼리문을 돌리기 위하여 sqlSession을 열어준다.
 			sqlSession = sqlSessionFactory.openSession();
 			//#56번에서 선언한 변수(sinUpMap)에 com.util.sqlproc.xml파일의 1-2.회원가입 프로시저를 실행하기 (Value값은 M_signUp에서 꺼내줄 것)
-			signUpMap = sqlSession.selectList("mybatis.ProcMapper.chat_signup", M_signUp);
+			signUpMap = sqlSession.selectList("mybatis.ProcMapper.chat_signup", m_signUp);
 		} catch (Exception e) {
 			//단계별 예외처리
 			e.printStackTrace();

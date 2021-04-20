@@ -46,7 +46,7 @@ public class SettingDao {
 	}///////////////////////////////////// [[[ 5-1. 내 정보 불러오기 종료 ]]] /////////////////////////////////////
 	
 	/* 5-2. 사용자 상태 수정하기 */
-	public List<Map<String, Object>> Update_myState(Map<String,Object> Mystate_update){
+	public List<Map<String, Object>> Update_myState(Map<String,Object> mystate_Update){
 		//SqlSessionFactory를 통하여 MyBatis와 연결 (싱글톤)
 		sqlSessionFactory = MyBatisCommonFactory.getInstance();
 		//myChatList라는 변수명 선언해주기
@@ -55,7 +55,7 @@ public class SettingDao {
 			//MyBatis를 통하여 쿼리문 또는 프로시저를 실행하려고 열었음
 			sqlSession = sqlSessionFactory.openSession();
 			//#49번에서 선언한 변수(update_MyState)에 com.util.sqlproc.xml파일의 5-2.사용자 상태 수정하기 프로시저 실행.(Mystate_update의 Value로 꺼냄)
-			update_MyState = sqlSession.selectList("mybatis.ProcMapper.update_MyState", Mystate_update);
+			update_MyState = sqlSession.selectList("mybatis.ProcMapper.update_MyState", mystate_Update);
 		//단계별 예외처리
 		} catch (Exception e) {
 			e.printStackTrace();
