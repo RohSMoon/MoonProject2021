@@ -11,13 +11,32 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 
 import javax.swing.JTextPane;
 
+import server.TalkClient;
+
 public class Login_view extends JFrame {
 
+	//////로그인 메소드
+	public void loginSuccess(int loginTrueFalse,String loginMsg) {
+		JOptionPane.showMessageDialog(null, loginMsg, "로그인", JOptionPane.INFORMATION_MESSAGE);
+		//////성공했을때만 루프가 돌아가면 됨.
+		if(loginTrueFalse==1) {
+			this.setVisible(false);
+			//login_view.dispose(); /////////얘뭐야
+			MenuList_View menuList_View = new MenuList_View();
+		}
+	}
+	//////회원가입 메소드
+	public void signupSuccess(String signupResult) {
+			System.out.println(signupResult);
+			JOptionPane.showMessageDialog(null, "정보 메시지 내용", "정보 메시지 제목", JOptionPane.INFORMATION_MESSAGE);
+	}
+	//////////////////////////////////////////
 //Declare
 	LogView_Panel 	logView_Panel                    ;
 	JTextField 		logView_MemberNo_jtf         	 ;
@@ -32,8 +51,11 @@ public class Login_view extends JFrame {
 	/**
 	 * Create the application.
 	 */
+	TalkClient tc = null;
 	public Login_view() {
 		initialize();
+		//소켓이 생성되면서 서버와 연결
+		tc = new TalkClient(this);
 	}
 	/////End of Const	/////End of Const	/////End of Const	/////End of Const	/////End of Const
 	/**
@@ -115,5 +137,6 @@ public class Login_view extends JFrame {
 		Login_view window = new Login_view();
 			}
 			//////End of This Launch the application			//////End of This Launch the application			//////End of This Launch the application
+	
 }
 ///End of This Class ///End of This Class ///End of This Class ///End of This Class ///End of This Class 

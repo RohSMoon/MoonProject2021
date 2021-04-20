@@ -6,20 +6,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.swing.JOptionPane;
+
 import View.Login_view;
 
 public class TalkClientThread extends Thread{
-	Login_view login = null;
+	TalkClient tc = null;	
 	login2 login2 = null;
 	///이건 클라이언트
-	public TalkClientThread(Login_view login) {
-		this.login = login;
-	}
-	//////이건 연습용//////////////////////////
-	TalkClient tc = null;
 	public TalkClientThread(TalkClient tc) {
 		this.tc = tc;
-	}////////////////연습////////////////////
+	}
 	@Override
 	public void run() {
 		////// ois로 메세지를 전달 받으면 담을 통
@@ -32,7 +29,7 @@ public class TalkClientThread extends Thread{
 		while(!isStop) {
 			//////TalkServerThread를 통해서 값을 받음.
 			try {
-				msg = (String)login.getOis().readObject();
+				msg = (String)tc.ois.readObject();
 				System.out.println(msg);
 				////// 값을 쪼갤 StringTokenizer를 선언함.
 				StringTokenizer st = null;
@@ -50,16 +47,16 @@ public class TalkClientThread extends Thread{
 					case Protocol.LOGIN :{
 						int    loginTrueFalse = Integer.parseInt(st.nextToken());
 						String loginMsg       = st.nextToken();
-						login.loginSuccess(loginTrueFalse,loginMsg);
+						tc.login_view.loginSuccess(loginTrueFalse,loginMsg);
 					}break;
 					////// 회원가입 프로토콜  
 					case Protocol.SIGNUP :{
 						String signupResult = st.nextToken();
-						login.signupSuccess(signupResult);
+						tc.login_view.signupSuccess(signupResult);
 					}break;
 					///// 나를 제외한 사원들 정보 보여주기
 					case Protocol.MEMLIST :{
-						list= (List)login.getOis().readObject();
+						list= (List)tc.ois.readObject();
 						for(String i:list) {
 							System.out.println(i);
 						}
@@ -69,7 +66,7 @@ public class TalkClientThread extends Thread{
 					case Protocol.ROOMLIST :{
 						//****여기서 중요 나중에 방 넣어줄때 key도 숨김처리해서 같이 넣어줘야한다.
 						//그래야 나중에 방에 들어갈때 몇 번 방인지를 내가 찾을 수 있기 때문이다.
-						map= (Map)login.getOis().readObject();
+						map= (Map)tc.ois.readObject();
 						for(Object key:map.keySet()) {
 							System.out.println(map.get(key));
 						}
@@ -79,7 +76,7 @@ public class TalkClientThread extends Thread{
 					case Protocol.GROUPLIST :{
 						//****여기서 중요 나중에 방 넣어줄때 key도 숨김처리해서 같이 넣어줘야한다.
 						//그래야 나중에 방에 들어갈때 몇 번 방인지를 내가 찾을 수 있기 때문이다.
-						map= (Map)login.getOis().readObject();
+						map= (Map)tc.ois.readObject();
 						for(Object key:map.keySet()) {
 							System.out.println(map.get(key));
 						}
@@ -119,8 +116,8 @@ public class TalkClientThread extends Thread{
 					///// 방에 입장하기
 					case Protocol.MYROOM_IN :{
 						//여기에 나중에 방 창 켜지는 것도 구현 해줘야한다다다다다!
-						list= (List)login.getOis().readObject();
-						csvList = (List)login.getOis().readObject();
+						list= (List)tc.ois.readObject();
+						csvList = (List)tc.ois.readObject();
 						//////방 안 사람들 뷰에 보이도록
 						System.out.println("------------방 안 사람들-------------");
 						for(String member:list) {
@@ -136,8 +133,8 @@ public class TalkClientThread extends Thread{
 					}break;
 					///// 내가 속하지 않은 그룹 방에 입장하기
 					case Protocol.GROUPROOM_IN :{
-						list= (List)login.getOis().readObject();
-						csvList = (List)login.getOis().readObject();
+						list= (List)tc.ois.readObject();
+						csvList = (List)tc.ois.readObject();
 						//////방 안 사람들 뷰에 보이도록
 						System.out.println("------------방 안 사람들-------------");
 						for(String member:list) {
