@@ -59,7 +59,7 @@ public class MenuList_View extends JFrame {
 	 * Initialize the contents of the this.
 	 */
 	private void initialize() {
-		String imgPath = "src/imgs/";
+		String imgPath = "D://Users/rsmoo/eclipse-workspace/Project2/src/imgs/";
 		///////////////////////////////////
 		
 		MenuPanel = new JPanel();

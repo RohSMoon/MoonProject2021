@@ -6,9 +6,6 @@ import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,11 +17,10 @@ import javax.swing.JTextField;
 
 import javax.swing.JTextPane;
 
-import server.Protocol;
 import server.TalkClient;
-import server.TalkClientThread;
 
 public class Login_view extends JFrame {
+
 	//////로그인 메소드
 	public void loginSuccess(int loginTrueFalse,String loginMsg) {
 		JOptionPane.showMessageDialog(null, loginMsg, "로그인", JOptionPane.INFORMATION_MESSAGE);
