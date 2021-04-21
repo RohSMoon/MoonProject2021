@@ -12,23 +12,26 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-public class MenuList_View extends JFrame {
+public class MenuList_View extends JFrame implements ChangeListener    {
 	JTree memberListTree								  ;	//멤버리스트 JTREE
 	JPanel bottomTimePanel                                ;	//하단 시간 표시 패널
 	JLabel TimeLabel                                      ; //하단 시간 표시 라벨
 	JTabbedPane jTabbedPane								  ; //탭 페인 
 //	MenuList_Ctrl menuList_Ctrl						  	  ; //메뉴 컨트롤러
-	MemberList_Panel 		memberList_Panel		      ; //멤버리스트 패널
-	Config_Main_Panel 		config_Main_Panel		      ; // 설정 메인창
-	ChatRoomList_Panel 		chatroomList_Panel		      ; // 채팅창 목록 패널
-	GroupChatRoomList_Panel groupChatRoomList_Panel		  ; // 그룹 채팅창 목록 패널
+//	MemberList_Panel 		memberList_Panel		      ; //멤버리스트 패널
+////	Config_Main_Panel 		config_Main_Panel		      ; // 설정 메인창
+//	ChatRoomList_Panel 		chatroomList_Panel		      ; // 채팅창 목록 패널
+//	GroupChatRoomList_Panel groupChatRoomList_Panel		  ; // 그룹 채팅창 목록 패널
 	
 	
 	///////End of Var///////End of Var///////End of Var///////End of Var///////End of Var///////End of Var///////End of Var//
@@ -52,6 +55,7 @@ public class MenuList_View extends JFrame {
 	 * Initialize the contents of the this.
 	 */
 	private void initialize() { // 화면 출력 메소드
+
 		String imgPath = "src/imgs/"; // 이미지 패스 경로
 		///////////////////////////////////
 		
@@ -60,19 +64,19 @@ public class MenuList_View extends JFrame {
 		jTabbedPane.setBounds(0, 0, 269+65, 431); // 탭페인 위치크기 지정
 		
 		
-		
-		jTabbedPane.addTab("사원목록",memberList_Panel			= new MemberList_Panel());//멤버리스트 패널 생성 생성 및 탭페인에 추가
+		jTabbedPane.addTab("사원목록",	new MemberList_Panel());//멤버리스트 패널 생성 생성 및 탭페인에 추가
 		jTabbedPane.setBackgroundAt(0, new Color(255, 255, 255)); // 0번째 탭의 색상 추가
 		
-		jTabbedPane.addTab("채팅방",chatroomList_Panel		= new ChatRoomList_Panel());// 채팅리스트 패널 생성 및 탭페인에 추가
+		jTabbedPane.addTab("채팅방",  new ChatRoomList_Panel());// 채팅리스트 패널 생성 및 탭페인에 추가
 		jTabbedPane.setBackgroundAt(1, new Color(255, 255, 255)); // 1번 째 탭의 색상 추가
 		
-		jTabbedPane.addTab("그룹채팅",groupChatRoomList_Panel	= new GroupChatRoomList_Panel()); //그룹 채팅 리스트 패널 생성 및 탭페인 에 추가
+		jTabbedPane.addTab("그룹채팅", new GroupChatRoomList_Panel()); //그룹 채팅 리스트 패널 생성 및 탭페인 에 추가
 		jTabbedPane.setBackgroundAt(2, new Color(255, 255, 255)); // 2번 탭의 색상 추가
 		
-		jTabbedPane.addTab("설정창",config_Main_Panel			= new Config_Main_Panel());// 설정 메인 창 생성 및 탭페인에 추가
+		jTabbedPane.addTab("설정창",new Config_Base_Panel(this));// 설정 메인 창 생성 및 탭페인에 추가
 		jTabbedPane.setBackgroundAt(3, new Color(255, 255, 255)); // 3번 탭의 색상추가
 		this.add(jTabbedPane); // 프레임에 텝페인 부착
+		jTabbedPane.addChangeListener(this);//탭페인 변화 리스너
 		
 		
 		
@@ -95,4 +99,14 @@ public class MenuList_View extends JFrame {
 		this.setTitle("아라 상사 메신져"); // 프레임 타이틀 세팅
 		this.setVisible(true);// 프레임 출력
 	}////End of initialize////End of initialize////End of initialize////End of initialize////End of initialize
+
+	@Override
+	public void stateChanged(ChangeEvent ce) {
+		int tabNo = jTabbedPane.getSelectedIndex(); //인덱스 번호를 가져온다.
+		if(tabNo != 3) { //가져온 인덱스가 3번이 아니면
+		jTabbedPane.remove(3); // 3번을 지웠다가 
+		jTabbedPane.addTab("설정창",new Config_Base_Panel(this));// 3번을 생성해줘
+		}
+	}
+
 }////End of this Class   /// End of this Class////}////End of this Class   /// End of this Class////}////End of this Class   /// End of this Class//// 
