@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="mybatis.ProcMapper">
+
+<!-- 1.로그인 및 회원가입 -->	
+	<!-- 1-1. 로그인 프로시저 실행문 -->
+	<select id="chat_login" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_login(
+						#{p_no},
+						#{p_pw},
+					    #{msg, mode=OUT, jdbcType=VARCHAR},
+					    #{r_state, mode=OUT, jdbcType=VARCHAR},
+					    #{p_name, mode=OUT, jdbcType=VARCHAR}
+				   )
+		}
+	</select>
+	<!-- 1-2. 회원가입 프로시저 실행문 -->
+	<select id="chat_signup" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_SignUp(#{p_dept_name}
+		   				, #{p_no}
+		   				, #{p_pw}
+		   				, #{p_mem_name}
+		   				, #{p_mem_level}
+		   				, #{r_state, mode=OUT, jdbcType=VARCHAR}
+		   				, #{msg, mode=OUT, jdbcType=VARCHAR})}
+	</select>
+<!-- 2.부서목록창 -->
+	
+	<!-- 2-1. 메인 목록창 불러오기 프로시저 실행문 -->
+	<select id="chat_mainList" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_mainlist(#{p_no, mode=IN, jdbcType=NUMBER, javaType=int}
+						  , #{cur, mode=out, jdbcType=CURSOR, javaType=ResultSet, resultMap=chat_mainList})}
+	</select>
+	
+	<!-- 2-2. 사원 검색 프로시저 실행문 -->
+	<select id="chat_searchMember" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_SearchMember(#{p_sertype, mode=IN, jdbcType=VARCHAR, javaType=String}
+							  , #{p_userser, mode=IN, jdbcType=VARCHAR, javaType=String}
+							  , #{cur, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, resultMap=chat_searchMember})}
+	</select>
+	
+	<!-- 2-3. 방 개설 프로시저 실행 -->
+	<select id="create_Room" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_CreateRoom(#{p_Room_Name, mode=IN, jdbcType=VARCHAR, javaType=String}
+						    , #{msg, mode=OUT, jdbcType=varchar2, javaType=ResultSet, reusltMap=create_Room})}
+	</select>
+	
+	<!-- 2-4. 방 안에 사람 넣기 프로시저 실행 -->
+	<select id="inChat_Member" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_createroom2(#{p_Room_no, mode=IN, jdbcType=NUMBER, javaType=int}
+							 , #{p_RoomPplcount, mode=IN, jdbcType=NUMBER, javaType=int}
+							 , #{p_Room_name, mode=IN, jdbcType=VARCHAR, javaType=String})}
+	</select>
+	
+<!-- 3.채팅목록창 -->
+
+	<!-- 3-1. 내 채팅방만 띄우기 프로시저 실행 -->
+	<select id="myChat_list" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_My_Chatting_Room(#{p_mem_no, mode=IN, jdbcType=NUMBER, javaType=int}
+								  , #{p_temp, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, reusltMap=myChat_list})}
+	</select>
+	
+	<!-- 3-2. 입장되지 않은 그룹 채팅방만 띄우기 프로시저 실행 -->
+	<select id="notEgroup_list" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_Group_Chatting_Room(#{p_mem_no, mode=IN, jdbcType=NUMBER, javaType=int}
+									 , #{p_temp, mode=OUT, jdbcType=varchar2, javaType=ResultSet, reusltMap=notEgroup_list})}
+	</select>
+
+<!-- 4.대화창 -->
+
+	<!-- 4-1. 방 이름 가져오기 프로시저 실행 -->
+	<select id="getRoom_title" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_room_title(#{p_Room_no, mode=IN, jdbcType=NUMBER, javaType=int}
+						    , #{p_room_title, mode=OUT, jdbcType=varchar2, javaType=ResultSet, reusltMap=getRoom_title})}
+	</select>
+	
+	<!-- 4-2. 방 초대하기 프로시저 실행 -->
+	<select id="invite_Room" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_room_invite(#{p_mem_no, mode=IN, jdbcType=NUMBER, javaType=int}
+							 , #{p_room_no, mode=IN, jdbcType=NUMBER, javaType=int})}
+	</select>
+	
+	<!-- 4-3. 방 나가기 프로시저 실행 -->
+	<select id="exit_Room" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_room_exit(#{p_mem_no, mode=IN, jdbcType=NUMBER, javaType=int}
+						   , #{p_room_no, mode=IN, jdbcType=NUMBER, javaType=int})}
+	</select>
+	
+	<!-- 4-4.대화 내용 불러오기 프로시저 실행 -->
+	<select id="getConver" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_conversation_get(#{p_room_no, mode=IN, jdbcType=NUMBER, javaType=int}
+								  , #{p_temp, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, reusltMap=getConver})}
+	</select>
+	
+	<!-- 4-5. 메시지 전송 프로시저 실행 -->
+	<select id="sendMessage" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_conversation_add(#{p_mem_no, mode=IN, jdbcType=NUMBER, javaType=int}
+								  , #{p_room_no, mode=IN, jdbcType=NUMBER, javaType=int}
+								  , #{p_conver_text, mode=IN, jdbcType=VARCHAR, javaType=String})}
+	</select>
+
+<!-- 5.설정창 -->
+
+	<!-- 5-1.내 정보 불러오기 프로시저 실행 -->
+	<select id="myInfo" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_Member_Info(#{p_no, mode=IN, jdbcType=NUMBER, javaType=int}
+							 , #{p_temp, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, reusltMap=myInfo})}
+	</select>	
+
+	<!-- 5-2.사용자 상태 수정하기 프로시저 실행 -->
+	<select id="update_MyState" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_state(#{p_no, mode=IN, jdbcType=NUMBER, javaType=int}
+					   , #{p_state, mode=IN, jdbcType=VARCHAR, javaType=String})}
+	</select>
+	
+<!-- 6.관리자 창 -->
+
+	<!-- 6-1. 전체 사원 조회 프로시저 실행 -->
+	<select id="select_AllMember" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_select_Allemp(#{o_cursor, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, reusltMap=select_AllMember})}
+	</select>
+	
+	<!-- 6-2. 회원가입 승인 목록 가져오기 프로시저 실행 -->
+	<select id="approval_List" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_mem_approval_list(#{p_temp, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, reusltMap=approval_List})}
+	</select>
+	
+	<!-- 6-3. 회원가입 승인 프로시저 실행 -->
+	<select id="approval_Member" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL proc_mem_approval(#{p_mem_no, mode=IN, jdbcType=NUMBER, javaType=int})}
+	</select>
+	
+	<!-- 6-4. 사원정보 수정 프로시저 실행 -->
+	<select id="update_MemberInfo" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL pro_update_member(#{p_mem_no, mode=IN, jdbcType=NUMBER, javaType=int}
+							  , #{p_mem_name, mode=IN, jdbcType=VARCHAR, javaType=String}
+							  , #{p_dept_name, mode=IN, jdbcType=VARCHAR, javaType=String}
+							  , #{p_mem_level, mode=IN, jdbcType=VARCHAR, javaType=String})}
+	</select>	
+	
+	<!-- 6-5. 사원정보 삭제 프로시저 실행 -->
+	<select id="del_MemberInfo" statementType="CALLABLE" parameterType="java.util.Map">
+		{CALL del_member(#{p_mem_no, mode=IN, jdbcType=NUMBER, javaType=int})}
+	</select>
+	
+</mapper>
