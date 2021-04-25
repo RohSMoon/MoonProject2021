@@ -108,10 +108,15 @@
 		ORDER BY con.conver_no
 	</select>
 	
-	<!-- 4-2.대화방에 클라이언트 추가 -->
-	<select id="getingroup" parameterType="map">
-		INSERT INTO room_ppl(mem_no,room_no,ppl_being) VALUES(#{mem_no},#{room_no},1)
+	<!-- 4-3.방나가기-->
+	<select id="exit_Room" statementType="CALLABLE"  parameterType="java.util.Map">
+		{CALL proc_room_exit(#{p_mem_no}
+						   , #{p_room_no}
+						   , #{room_type, mode=OUT, jdbcType=INTEGER}
+						   , #{room_being, mode=OUT, jdbcType=INTEGER})
+						   }
 	</select>
+	
 	
 	<!-- 4-5.대화방에 클라이언트 추가 -->
 	<select id="sendMessage" parameterType="map">
@@ -121,6 +126,18 @@
 								  }
 	</select>
 	
+	<!-- 4-6.대화방에 클라이언트 추가 -->
+	<select id="getingroup" parameterType="map">
+		INSERT INTO room_ppl(mem_no,room_no,ppl_being) VALUES(#{mem_no},#{room_no},1)
+	</select>
+	
+	<!-- 1대1일때 상대가 나간상태라면 다시 불러오기 -->
+	<select id="putyou" statementType="CALLABLE"  parameterType="java.util.Map">
+		{CALL proc_put_you(#{mem_no}
+						, #{room_no}
+						, #{p_value, mode=OUT, jdbcType=INTEGER })
+						 }
+	</select>
 	<!-- 5.설정창 -->
 
 	<!-- 5-1.내 정보 불러오기 프로시저 실행 -->

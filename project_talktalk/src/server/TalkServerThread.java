@@ -61,7 +61,7 @@ public class TalkServerThread extends Thread {
 			}
 		}
 	}
-	//특정 방 사람들에게 정보전달하기 위해서 필요
+	//모든 접속자들에게 정보전달하기 위해서 필요
 	private void broadCastingAll(String msg) {
 		synchronized(this) {
 			for(TalkServerThread tst:ts.globalList) {
@@ -117,6 +117,7 @@ public class TalkServerThread extends Thread {
 			room.mem_no.add(this.mem_no);//나의 아이디 추가
 			room.userList.add(this);//나의 스래드 추가
 			room.setTitle(room_name);//그 방의 이름
+			room.setRoom_num(room_no);
 			ts.roomList.add(room); //룸 추가
 		}
 	}
@@ -486,10 +487,18 @@ public class TalkServerThread extends Thread {
 								room_GI_num = roomIndividual_re;
 								int roomlistno = 0;
 								for(int i=0;i<ts.roomList.size();i++) {
-									if(ts.roomList.get(i).room_num==room_GI_num) {
+									if(ts.roomList.get(i).getRoom_num()==room_GI_num) {
 										roomlistno=i;
 										break;
 									}
+								}
+								if(roomlistno==0) {
+									roomCreate = new Room();
+									roomCreate.setTitle(room_GI_title); //이 방의 방제목 넣기
+									roomCreate.setRoom_num(room_GI_num); //이방의 번호 넣기
+									roomCreate.mem_no.add(this.mem_no); //방 만든 사람의 번호
+									ts.roomList.add(roomCreate);
+									roomlistno=ts.roomList.size()-1;
 								}
 								if(Integer.parseInt(room_indi.get("re_me").toString())==mem_no) {
 									//내가 다시 들어온거니까
@@ -501,7 +510,7 @@ public class TalkServerThread extends Thread {
 								  			+Protocol.seperator+room_GI_num //방번호
 											+Protocol.seperator+room_GI_title //방이름
 											);
-								}else if(Integer.parseInt(room_indi.get("re_you").toString())==mem_no) {
+								}else if(Integer.parseInt(room_indi.get("re_you").toString())==member_nos.get(0)) {
 									for(TalkServerThread tst:ts.globalList) {
 										//그 사람이 현재 접속해 있는 상태라면 그 사람의 번호와 스래드를 담아준다.
 										if(member_nos.get(0)==tst.mem_no) {
@@ -545,6 +554,20 @@ public class TalkServerThread extends Thread {
 					case Protocol.MYROOM_IN :{
 						int room_no = Integer.parseInt(st.nextToken());
 						String room_GI_title = st.nextToken();
+						//개인방이고 상대가 나간 상태라면 상대를 다시 강제로 안에 넣어주기
+						int p_value = ts.rNcDao.putInyou(mem_no,room_no);
+						if(p_value!=0) {
+							for(TalkServerThread tst:ts.globalList) {
+								if(tst.mem_no==p_value) {
+									tst.send(Protocol.ROOM_CREATE
+											+Protocol.seperator+"ADD"       //방 목록에 추가해준다는 의미
+								  			+Protocol.seperator+room_no //방번호
+											+Protocol.seperator+room_GI_title //방이름
+											);
+									break;
+								}
+							}
+						}
 						//room_no를 다오에 넣어서 방 사람들 목록
 						List<Map<String,Object>> roomMember = ts.rNcDao.getRoom_people(room_no);
 						//대화한 사람이랑 대화 목록을 VO로 가져오겠지
@@ -638,61 +661,74 @@ public class TalkServerThread extends Thread {
 						////나가려는 방번호
 						int room_num = Integer.parseInt(st.nextToken());
 						String room_name = st.nextToken();
-						//그룹에서 나간건지, 개인방에서 나간건지 dao로 받기
-						//개인방일시에는 다오에서 두 명 전부 나갓다면 아예 삭제
-						//한 명만 나갔다면 나머지 한명이 접속해있는지 받기
-						
-						//그룹방일시에는 다오에서 전부 나가면 비워버리기
-						//나 나가도 사람이 남아있다면 받기
-						int groupstate = 1; //그룹방이면서 현존한다면!
-						/////그 방을 찾아서 스래드 삭제, 채팅 목록에서 삭제
-						for(int i=0;i<ts.roomList.size();i++) {
-							if(ts.roomList.get(i).getRoom_num()==room_num) {
-								for(int j=0;j<ts.roomList.get(i).userList.size();j++) {
-									//////나가는 사람의 스래드랑 번호 지워주기
-									if(ts.roomList.get(i).userList.get(j)==this) {
-										ts.roomList.get(i).userList.remove(j);
-										ts.roomList.get(i).mem_no.remove(j);
-										break;
-									}
+						int room_mem_num = mem_no;
+						//그룹에서 나간건지, 개인방에서 나간건지 dao로 받기, 방이 아예삭제 됬는지에대한 여부도 dao로 받기
+						Map<String,Object> exitroom = ts.rNcDao.getExitRoom(room_num,room_mem_num);
+						//개인방이면 1, 그룹이면 2
+						int room_type = Integer.parseInt(exitroom.get("room_type").toString());
+						//방이 아예삭제 되었다면 1, 아직 존재한다면 2
+						int room_being = Integer.parseInt(exitroom.get("room_being").toString());
+						//방이 아예 삭제 된다면 roomList에서 room에서 비우기
+						if(room_being==1) {
+							for(int i=0;i<ts.roomList.size();i++) {
+								if(ts.roomList.get(i).getRoom_num()==room_num) {
+									ts.roomList.remove(i);
+									break;
 								}
-								if(groupstate == 1) {
-									/////그룹방이면서 현존한다면+지금 접속해 있는 사람들 중에 그 방에 들어가 있는 사람이라면, 나간 사람 표시해주기
+							}
+							///모든 사람의 그룹방 목록에서 제거시키기
+							this.broadCastingAll(Protocol.GROUP_LIST
+									+Protocol.seperator+"DEL"     //방 목록에 추가해준다는 의미
+						  			+Protocol.seperator+room_num  //방번호
+									+Protocol.seperator+room_name //방이름
+									);
+						}
+						else if(room_being==2) {
+							/////그 방을 찾아서 스래드 삭제, 채팅 목록에서 삭제
+							for(int i=0;i<ts.roomList.size();i++) {
+								if(ts.roomList.get(i).getRoom_num()==room_num) {
+									for(int j=0;j<ts.roomList.get(i).userList.size();j++) {
+										//////나가는 사람의 스래드랑 번호 지워주기
+										if(ts.roomList.get(i).userList.get(j)==this) {
+											ts.roomList.get(i).userList.remove(j);
+											ts.roomList.get(i).mem_no.remove(j);
+											break;
+										}
+									}
+									////방이 현존한다면+지금 접속해 있는 사람들 중에 그 방에 들어가 있는 사람이라면, 나간 사람 표시해주기
 									this.broadCasting(Protocol.CHAT_IN
 											+Protocol.seperator+"DEL" //특정 사람 삭제하기
-											+Protocol.seperator+mem_no
+											+Protocol.seperator+room_num 
+											+Protocol.seperator+room_mem_num
 											+Protocol.seperator+mem_name,ts.roomList.get(i));
-									/////그룹방이면서 현존한다면+그 방 안 사람들에게 나갔음을 알려주기
-									this.broadCasting(Protocol.MESSAGE
-											         +Protocol.seperator+mem_name
-											         +Protocol.seperator+" 님이 나가셨습니다.",ts.roomList.get(i));
+									break;
 								}
-								break;
+							}
+						    /////만약 그룹방이고 그 방이 남아있다면 그룹방 리스트에 추가하기
+							if(room_type == 2 ) {
+								this.send(Protocol.GROUP_LIST
+										+Protocol.seperator+"ADD"     //방 목록에 추가해준다는 의미
+							  			+Protocol.seperator+room_num  //방번호
+										+Protocol.seperator+room_name //방이름
+										);
 							}
 						}
 						//내 방 리스트에 삭제하기
 						this.send(Protocol.ROOM_CREATE
-								+Protocol.seperator+"DEL"     //방 목록에 추가해준다는 의미
-					  			+Protocol.seperator+room_num //방번호
-								+Protocol.seperator+room_name //방이름
-								);
-						/////만약 그룹방이고 그 방이 남아있다면 그룹방 리스트에 추가하기
-						if(groupstate ==1) {
-							this.send(Protocol.GROUP_LIST
-									+Protocol.seperator+"ADD"     //방 목록에 추가해준다는 의미
-						  			+Protocol.seperator+room_num //방번호
-									+Protocol.seperator+room_name //방이름
-									);
-						}
+								 +Protocol.seperator+"DEL"     //방 목록에 추가해준다는 의미
+					  			 +Protocol.seperator+room_num  //방번호
+								 +Protocol.seperator+room_name //방이름
+								 );
+						
 						this.send(Protocol.ROOM_DEL+""); //보낼 프로토콜
 					}break;
 					case Protocol.MESSAGE:{
 						/////어느 방에서 말하는지
 						int    conver_room_num = Integer.parseInt(st.nextToken());
 						/////누가 말하는지
-						int    conver_num      = Integer.parseInt(st.nextToken());
+						int    conver_num      = mem_no;
 						/////말하는 사람 이름은 뭔지
-						String conver_name     = st.nextToken();
+						String conver_name     = mem_name;
 						/////뭐라고 말하는지
 						String conversation    = st.nextToken();
 						/////dao안에다가 대화 내용 넣어주기

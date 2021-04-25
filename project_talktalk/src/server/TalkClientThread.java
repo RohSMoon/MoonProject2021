@@ -118,6 +118,12 @@ public class TalkClientThread extends Thread{
 						else if("DEL".equals(room_GI)){							
 							System.out.println(room_GI_num+" ");
 							System.out.println("방 리스트에서 삭제 시켜주기");
+							for(int i=0;i<tc.menuListView.gp.group_dtm.getRowCount();i++) {
+								if(Integer.parseInt(tc.menuListView.cp.dtm.getValueAt(i, 0).toString())==room_GI_num) {
+									tc.menuListView.cp.dtm.removeRow(i);
+									break;
+								}
+							}
 						}
 
 					}break;
@@ -125,7 +131,10 @@ public class TalkClientThread extends Thread{
 					case Protocol.GROUP_LIST :{
 						String room_GI       = st.nextToken();
 						int    room_GI_num   = Integer.parseInt(st.nextToken()); 
-						String room_GI_title = st.nextToken(); 
+						String room_GI_title = null; 
+						while(st.hasMoreTokens()) {
+							room_GI_title = st.nextToken();
+						}
 						//만약 그룹이라면 그 그룹방에 초대받지 못한 사람은 없는 방에 생성해주기
 						if("ADD".equals(room_GI)) {
 							Vector onerow = new Vector();
@@ -169,12 +178,16 @@ public class TalkClientThread extends Thread{
 						cdView.room_num  = room_GI_num;
 						cdView.room_name = room_GI_title;
 						cdView.setTitle(room_GI_title);
+						cdView.tc = tc;
 						tc.clientRoom.add(cdView);
 						///방 안 사람들 뷰에 보이도록
 						System.out.println("------------방 안 사람들-------------");
 						for(Map member:listMap) {
 							System.out.println(member.get("p_mem_name")+" "+member.get("p_no"));
-							cdView.showWhochatJoined_jta.append(member.get("p_mem_name")+" "+member.get("p_no")+"\n");
+							Vector onerow = new Vector();
+							onerow.add(member.get("p_no"));
+							onerow.add(member.get("p_mem_name"));
+							cdView.dtm.addRow(onerow);
 						}
 						
 						////방 대화 다 보이도록
@@ -194,7 +207,10 @@ public class TalkClientThread extends Thread{
 						String me_name  =  st.nextToken();
 						 for(int i=0;i<tc.clientRoom.size();i++) {
 							 if(tc.clientRoom.get(i).room_num==room_GI_num) {
-								 tc.clientRoom.get(i).showWhochatJoined_jta.append(me_name+" "+me_num+"\n");
+								 Vector onerow = new Vector();
+								 onerow.add(me_num);
+								 onerow.add(me_name);
+								 tc.clientRoom.get(i).dtm.addRow(onerow);
 								 tc.clientRoom.get(i).showChat_jta.append("["+me_name+"]"+"님이 입장하셨습니다. \n");
 								 break;
 							 }
@@ -211,7 +227,10 @@ public class TalkClientThread extends Thread{
 						if("ADD".equals(room_GI)) {
 							for(int i=0;i<tc.clientRoom.size();i++) {
 								 if(tc.clientRoom.get(i).room_num==room_GI_num) {
-									 tc.clientRoom.get(i).showWhochatJoined_jta.append(me_name+" "+me_num+"\n");
+									 Vector onerow = new Vector();
+									 onerow.add(me_num);
+									 onerow.add(me_name);
+									 tc.clientRoom.get(i).dtm.addRow(onerow);
 									 tc.clientRoom.get(i).showChat_jta.append("["+me_name+"]"+"님이 입장하셨습니다. \n");
 									 break;
 								 }
@@ -219,7 +238,18 @@ public class TalkClientThread extends Thread{
 							System.out.println("그룹채팅 리스트에 생성시켜주기");				
 						}
 						else if("DEL".equals(room_GI)){							
-							//System.out.println(mem_no+" "+mem_name);
+							for(int i=0;i<tc.clientRoom.size();i++) {
+								if(tc.clientRoom.get(i).room_num==room_GI_num) {
+									for(int j=0;j<tc.clientRoom.get(i).dtm.getRowCount();j++) {
+										if(Integer.parseInt(tc.clientRoom.get(i).dtm.getValueAt(j, 0).toString())==me_num) {
+											tc.clientRoom.get(i).dtm.removeRow(j);
+											break;
+										}
+									}
+									tc.clientRoom.get(i).showChat_jta.append("["+me_name+"]"+"님이 나가셨습니다. \n");
+									break;
+								}
+							}
 							System.out.println("그룹채팅 리스트에 삭제해주기");
 						}
 					}break;
@@ -232,6 +262,7 @@ public class TalkClientThread extends Thread{
 						String conver_name     = st.nextToken();
 						/////뭐라고 말하는지
 						String conversation    = st.nextToken();
+						System.out.println("["+conver_name+"] "+conversation);
 						 for(int i=0;i<tc.clientRoom.size();i++) {
 							 if(tc.clientRoom.get(i).room_num==conver_room_num) {
 								 tc.clientRoom.get(i).showChat_jta.append("["+conver_name+"] "+conversation+"\n");
@@ -272,11 +303,7 @@ public class TalkClientThread extends Thread{
 					}break;
 					///// 방 삭제
 					case Protocol.ROOM_DEL:{
-						System.out.println("방 나가게 하기 창 끄기");
-					}break;
-					///// 로그아웃 
-					case Protocol.LOGOUT:{
-						System.out.println("아예 꺼버리기");
+						
 					}break;
 					///// 승인된 사원 추가하거나 또는 업데이트, 삭제하기
 					case Protocol.MANAGER_APPROVE_DEL :{
