@@ -9,7 +9,9 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.util.MyBatisCommonFactory;
-
+class InMember{
+	List<Map<String, Object>> p_temp;
+}
 public class ProductDao {
 	SqlSessionFactory sqlSessionFactory = null;
 	SqlSession sqlSession = null;
@@ -17,14 +19,18 @@ public class ProductDao {
 	public void refresh(ProductCon pc) {
 		//연결 베이스///////////////////////////////////////
 		sqlSessionFactory = MyBatisCommonFactory.getInstance();
-		List<Map<String,Object>> map = new ArrayList<>();
+		InMember map = new InMember();
 		try {
 			sqlSession = sqlSessionFactory.openSession();
 			sqlSession.selectList("mybatis.ProcMapper1.refresh", map);
+			System.out.println(map.p_temp.size());
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
-		for(Map<String,Object> map1 : map) {
+		finally {
+			sqlSession.close();
+		}
+		for(Map<String,Object> map1 : map.p_temp) {
 			System.out.println(map1.get("mem_no"));
 			Vector<Object> v = new Vector<>();
 			v.add(map1.get("mem_no"));
