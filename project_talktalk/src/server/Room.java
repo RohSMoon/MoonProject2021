@@ -8,7 +8,7 @@ public class Room {
 	  List<Integer>  mem_no    = new Vector<Integer>();
 	  //List<String>   mem_name  = new Vector<String>();
 	  String title = null;//방 이름
-	  int room_num = 0;//고유의 방 번호
+	  private int room_num = 0;//고유의 방 번호
 	  public Room() {}
 	  public String getTitle() {
 	  	return title;

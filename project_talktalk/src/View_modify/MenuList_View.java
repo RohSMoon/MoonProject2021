@@ -3,11 +3,15 @@ package View_modify;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -20,12 +24,13 @@ import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import server.Protocol;
 import server.TalkClient;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-public class MenuList_View extends JFrame{
+public class MenuList_View extends JFrame implements WindowListener{
 	JTree memberListTree								  ;	//멤버리스트 JTREE
 	JPanel bottomTimePanel                                ;	//하단 시간 표시 패널
 	JLabel TimeLabel                                      ; //하단 시간 표시 라벨
@@ -107,11 +112,51 @@ public class MenuList_View extends JFrame{
 		
 		this.setResizable(false); // 프레임 사이즈 조절 ㄴㄴ
 		this.setBounds(100, 100, 350, 500 ); // 프레임 크기 및 위 치지정
+		this.addWindowListener(this);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE); // 닫히면 jvm연결 끊기 -----------------
 		this.setLayout(null); // 프레임 레이아웃 앱솔루트 
 		this.getContentPane().setBackground(Color.WHITE); //프레임 배경색 지정
-		this.setTitle("아라 상사 메신져"); // 프레임 타이틀 세팅
+		this.setTitle("Talk!Talk!"); // 프레임 타이틀 세팅
 		this.setVisible(true);// 프레임 출력
 	}////End of initialize////End of initialize////End of initialize////End of initialize////End of initialize
+	@Override
+	public void windowActivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void windowClosed(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void windowClosing(WindowEvent arg0) {
+		JOptionPane.showMessageDialog(null, "자동 로그아웃 되었습니다.","로그아웃", JOptionPane.INFORMATION_MESSAGE);
+		try {
+			tc.oos.writeObject(Protocol.LOGOUT+"");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	@Override
+	public void windowDeactivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void windowIconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void windowOpened(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }////End of this Class   /// End of this Class////}////End of this Class   /// End of this Class////}////End of this Class   /// End of this Class//// 

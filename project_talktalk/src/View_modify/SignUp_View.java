@@ -148,7 +148,7 @@ public class SignUp_View extends JDialog {
       SignUp_View_jpl   .add(signUpView_EmpLevelComboBox); //회원가입 베이스 패널에  직급 콤보 박스 부착.
 
       signUpView_DeptComboBox = new JComboBox(); // 부서 콤보박스 생성
-      signUpView_DeptComboBox.setModel(new DefaultComboBoxModel(new String[] {"선택","개발1팀", "개발2팀", "홍보팀", "재무팀", "인사팀", "영업팀", "관리자"}));
+      signUpView_DeptComboBox.setModel(new DefaultComboBoxModel(new String[] {"선택","개발1팀", "개발2팀", "홍보팀", "재무팀", "인사팀", "영업팀"}));
       signUpView_DeptComboBox.setBounds(199, 192, 106, 23); // 부서 콤보박스 위치 지정.
       SignUp_View_jpl   .add(signUpView_DeptComboBox); //  회원가입 베이스 패널에  부서 콤보박스 부착
 ////////////////////////////////////////////////////////////////////////
